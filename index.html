@@ -6,162 +6,190 @@
     <title>หน้าแรก</title>
     <style>
         /* ------------------------------------- */
-        /* ส่วนที่ 0: LOADING SCREEN */
-        /* ------------------------------------- */
-        #loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #000000;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            transition: opacity 1s ease-out;
-            opacity: 1;
-        }
-
-        #loading-screen.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-        
-        /* Animation สำหรับรูป Reaper (loading1.png) */
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
-        }
-
-        #loading-reaper {
-            width: 150px;
-            height: auto;
-            margin-bottom: 20px;
-            animation: float 2s ease-in-out infinite;
-        }
-
-        #loading-text {
-            width: 200px;
-            height: auto;
-        }
-
-        /* ปุ่ม TAP TO START ที่เพิ่มเข้ามาใหม่ */
-        #tap-to-start {
-            margin-top: 30px;
-            padding: 10px 20px;
-            background-color: #d7c1a0;
-            color: #000000;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-family: 'Trajan Pro', Georgia, serif;
-            font-size: 1.2em;
-            display: none; /* ซ่อนไว้ก่อน */
-        }
-        #tap-to-start.visible {
-            display: block;
-        }
-
-
-        /* ------------------------------------- */
-        /* ส่วนที่ 1: การตั้งค่าพื้นฐานและพื้นหลัง (Video) */
+        /* ส่วนที่ 1: การตั้งค่าพื้นฐานและพื้นหลัง */
         /* ------------------------------------- */
         body {
             margin: 0;
             padding: 0;
+            /* เพิ่ม Trajan Pro เป็นตัวเลือกแรก ถ้าไม่มีให้ใช้ serif */
             font-family: 'Trajan Pro', Georgia, serif; 
             color: #333;
-            text-align: center;
-            padding-bottom: 50px;
-            /* แก้ไข: ซ่อนเนื้อหาหลักไว้ก่อน แต่ให้พื้นหลัง Body เป็นสีดำ */
-            visibility: hidden; 
-            background-color: #000000; 
-        }
-
-        body.loaded {
-            visibility: visible;
-        }
-
-        /* ------------------------------------- */
-        /* CSS สำหรับ Video Background */
-        /* ------------------------------------- */
-        #video-background {
-            position: fixed; right: 0; bottom: 0; min-width: 100%; min-height: 100%;
-            width: auto; height: auto; z-index: -100; overflow: hidden; background-size: cover;
-        }
-        
-        /* ------------------------------------- */
-        /* Overlay เพื่อให้ข้อความอ่านง่ายขึ้น (แนะนำให้ใช้) */
-        /* ------------------------------------- */
-        .content-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.4); z-index: -99;
+            /* พื้นหลัง: bg.jpg ล็อคไม่ไหลตาม scroll */
+            background-image: url('bg.jpg');
+            background-attachment: fixed; /* ล็อคพื้นหลัง */
+            background-size: cover; /* ครอบคลุมพื้นที่ทั้งหมด */
+            background-position: center center;
+            text-align: center; /* จัดเนื้อหาตรงกลาง (ใช้ร่วมกับ margin: auto ในบางกรณี) */
+            padding-bottom: 50px; /* เพิ่มช่องว่างด้านล่างสุด */
         }
 
         /* จัดเนื้อหาหลักให้อยู่ตรงกลางของพื้นที่ */
         .content-container {
-            max-width: 1200px; margin: 0 auto; padding: 20px; color: #ffffff; 
-            /* แก้ไข: ให้เนื้อหาหลักอยู่ด้านบนสุดของวิดีโอและ overlay */
-            position: relative; 
-            z-index: 1; 
+            max-width: 1200px; /* กำหนดความกว้างสูงสุดของเนื้อหา */
+            margin: 0 auto;
+            padding: 20px;
         }
-        
-        /* ------------------------------------- */
-        /* ส่วนที่ 2-5 และ Media Queries คงเดิม */
-        /* ------------------------------------- */
-        .center-image { display: block; margin: 10px auto; max-width: 90%; height: auto; }
-        #countdown { font-size: 5.25em; font-weight: bold; color: #d7c1a0; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); margin: 5px 0; padding: 15px 0; display: inline-block; }
-        .card-generator-section { background-color: rgba(255, 255, 255, 0.95); padding: 30px; margin: 40px auto; border-radius: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); max-width: 600px; color: #333; }
-        #nameInput, #submitName, #saveImage { padding: 10px; margin: 10px; border-radius: 5px; border: 1px solid #ccc; width: 70%; box-sizing: border-box; }
-        #submitName, #saveImage { width: auto; }
-        #card-container { margin: 30px auto 10px; width: 600px; height: 600px; overflow: hidden; position: relative; }
-        #cardCanvas { width: 100%; height: 100%; display: block; border: 1px solid #ccc; }
-        .covers-container { display: flex; justify-content: center; gap: 15px; margin: 40px auto; padding: 0 10px; max-width: 95%; }
-        .cover-item { flex: 1; min-width: 100px; max-width: 300px; height: auto; transition: transform 0.3s ease; border-radius: 8px; overflow: hidden; }
-        .cover-item:hover { transform: scale(1.05); }
-        .cover-item img { display: block; width: 100%; height: auto; border-radius: 5px; }
 
+        /* ------------------------------------- */
+        /* ส่วนที่ 2: รูปภาพและส่วนกลางหน้าจอ */
+        /* ------------------------------------- */
+        .center-image {
+            display: block;
+            margin: 10px auto; 
+            max-width: 90%; /* รูปภาพจะลดขนาดลงตามความกว้างของ content-container */
+            height: auto;
+        }
+
+        /* ------------------------------------- */
+        /* ส่วนที่ 3: นับถอยหลัง (Countdown) - Default (Desktop) */
+        /* ------------------------------------- */
+        #countdown {
+            font-size: 5.25em; /* ขนาด Desktop */
+            font-weight: bold;
+            color: #d7c1a0; 
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); 
+            margin: 5px 0; 
+            padding: 15px 0; 
+            display: inline-block; 
+        }
+
+        /* ------------------------------------- */
+        /* ส่วนที่ 4: การ์ด/ใส่ชื่อ (Card Generator) - Default (Desktop) */
+        /* ------------------------------------- */
+        .card-generator-section {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            margin: 40px auto;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 600px; /* ขนาดสูงสุด Desktop */
+        }
+        
+        /* ช่องกรอกชื่อและปุ่ม */
+        #nameInput, #submitName, #saveImage {
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            width: 70%; /* ให้ input ยืดหยุ่น */
+            box-sizing: border-box; /* สำคัญเพื่อให้ padding ไม่ดันความกว้างเกิน 100% */
+        }
+        #submitName, #saveImage {
+             width: auto; /* ปุ่มไม่จำเป็นต้องกว้าง 70% */
+        }
+
+        /* ส่วนแสดงรูปภาพ card.jpg (Canvas) - Default (Desktop) */
+        #card-container {
+            margin: 30px auto 10px;
+            width: 600px; /* ขนาดแสดงผล Desktop */
+            height: 600px; 
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Canvas สำหรับวาดรูปภาพและข้อความ */
+        #cardCanvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+            border: 1px solid #ccc; 
+        }
+
+        /* ------------------------------------- */
+        /* ส่วนที่ 5: รูปภาพ Cover (Responsive Grid) */
+        /* ------------------------------------- */
+        .covers-container {
+            display: flex; /* จัดเรียงแบบแนวนอน */
+            justify-content: center;
+            gap: 15px; 
+            margin: 40px auto;
+            padding: 0 10px;
+            max-width: 95%;
+        }
+
+        .cover-item {
+            flex: 1; /* ให้แต่ละรูปขยายเท่าๆ กัน */
+            min-width: 100px;
+            max-width: 300px; 
+            height: auto;
+            transition: transform 0.3s ease; 
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .cover-item:hover {
+            transform: scale(1.05);
+        }
+
+        .cover-item img {
+            display: block;
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        /* ===================================== */
+        /* MEDIA QUERIES (สำหรับ Mobile และ Tablet) */
+        /* ===================================== */
+
+        /* สำหรับ Tablet (หน้าจอ 768px ลงไป) */
         @media (max-width: 768px) {
-            #countdown { font-size: 3.5em; }
-            .card-generator-section { max-width: 90%; }
-            #card-container { width: 90%; height: 0; padding-bottom: 90%; position: relative; margin-left: auto; margin-right: auto; }
-            #cardCanvas { position: absolute; top: 0; left: 0; }
-            .covers-container { gap: 10px; padding: 0 5px; }
+            #countdown {
+                font-size: 3.5em; /* ลดขนาด Count Down */
+            }
+            .card-generator-section {
+                 max-width: 90%; /* ให้ส่วน Card ยืดตามหน้าจอ */
+            }
+            #card-container {
+                width: 90%; /* ให้ Canvas container ยืดตามหน้าจอ */
+                height: 0;
+                padding-bottom: 90%; /* ทำให้เป็นสี่เหลี่ยมจัตุรัสตามความกว้าง (อัตราส่วน 1:1) */
+                position: relative;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            #cardCanvas {
+                position: absolute;
+                top: 0;
+                left: 0;
+            }
+            .covers-container {
+                /* คง Flexbox ไว้ แต่ให้แต่ละรายการใช้พื้นที่มากขึ้น */
+                gap: 10px;
+                padding: 0 5px;
+            }
         }
         
+        /* สำหรับ Mobile (หน้าจอ 480px ลงไป) */
         @media (max-width: 480px) {
-            #countdown { font-size: 2.5em; }
-            .card-generator-section { padding: 20px; }
-            .covers-container { flex-direction: column; align-items: center; gap: 15px; }
-            .cover-item { max-width: 85%; }
-            #nameInput { width: 100%; }
-            #submitName, #saveImage { display: block; width: 100%; margin: 10px 0; }
+            #countdown {
+                font-size: 2.5em; /* ลดขนาด Count Down อีก */
+            }
+            .card-generator-section {
+                 padding: 20px;
+            }
+            /* จัดเรียง Cover ให้ซ้อนกันแนวตั้งเมื่อจอเล็กมาก */
+            .covers-container {
+                flex-direction: column; 
+                align-items: center;
+                gap: 15px;
+            }
+            .cover-item {
+                max-width: 85%; /* ให้ Cover ใช้พื้นที่ส่วนใหญ่ของหน้าจอ */
+            }
+            #nameInput {
+                width: 100%; /* ให้ Input เต็มความกว้าง */
+            }
+            #submitName, #saveImage {
+                 /* จัดปุ่มให้อยู่บรรทัดเดียวกันหรือเรียงสวยงาม */
+                 display: block; 
+                 width: 100%;
+                 margin: 10px 0;
+            }
         }
-        
-        @media (min-aspect-ratio: 16/9) { #video-background { width: 100%; height: auto; } }
-        @media (max-aspect-ratio: 16/9) { #video-background { width: auto; height: 100%; } }
     </style>
 </head>
 <body>
-
-    <div id="loading-screen">
-        <img src="loading1.png" alt="Loading Reaper" id="loading-reaper">
-        <img src="loading2.png" alt="Loading Text" id="loading-text">
-        <button id="tap-to-start">TAP TO START</button> 
-    </div>
-    
-    <audio id="bg-music" loop muted>
-        <source src="halloween.mp3" type="audio/mp3">
-    </audio>
-
-    <video muted loop id="video-background">
-        <source src="BG.mp4" type="video/mp4">
-    </video>
-    
-    <div class="content-overlay"></div>
 
     <div class="content-container">
 
@@ -188,7 +216,11 @@
             <p style="font-size: 0.8em; color: #555;">(รูปภาพที่แสดงในกรอบลดขนาดลง 50% เพื่อให้แสดงผลบนหน้าจอ)</p>
         </div>
 
+        
+
         <img src="text03.png" alt="ข้อความที่ 3" class="center-image">
+
+       
 
         <div class="covers-container">
             <a href="https://SugarBrown.readawrite.com" target="_blank" class="cover-item">
@@ -206,22 +238,28 @@
 
     <script>
         /* ------------------------------------- */
-        /* ส่วนที่ 6-7: JavaScript (Countdown & Card) - คงเดิม */
+        /* ส่วนที่ 6: JavaScript (นับถอยหลัง) */
         /* ------------------------------------- */
 
         function startCountdown() {
+            // วันที่และเวลาเป้าหมาย: 00:00:00 ของวันที่ 31 October 2025 ในเขตเวลาของไทย (UTC+7)
             const targetDate = new Date('October 31, 2025 00:00:00 GMT+07:00').getTime();
             const countdownEl = document.getElementById('countdown');
 
+            // อัปเดตทุก 1 วินาที
             const interval = setInterval(function() {
                 const now = new Date().getTime();
                 const distance = targetDate - now;
+
+                // คำนวณเวลาที่เหลือ
                 const days = Math.floor(distance / (1000 * 60 * 60 * 24));
                 const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
                 const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
                 const seconds = Math.floor((distance % (1000 * 60)) / 1000).toString().padStart(2, '0');
 
+                // แสดงผลลัพธ์
                 if (distance > 0) {
+                    // แสดงผลแบบรวมชั่วโมงทั้งหมด
                     const totalHours = days * 24 + parseInt(hours);
                     countdownEl.innerHTML = `${totalHours.toString().padStart(2, '0')} : ${minutes} : ${seconds}`;
                 } else {
@@ -231,22 +269,29 @@
             }, 1000);
         }
 
+        /* ------------------------------------- */
+        /* ส่วนที่ 7: JavaScript (สร้างการ์ด) - แก้ไขการแสดงผลเริ่มต้นและตำแหน่ง */
+        /* ------------------------------------- */
+
         const canvas = document.getElementById('cardCanvas');
         const ctx = canvas.getContext('2d');
         const submitBtn = document.getElementById('submitName');
         const saveBtn = document.getElementById('saveImage');
         const nameInput = document.getElementById('nameInput');
-        const bgMusic = document.getElementById('bg-music');
+
         const randomTexts = [
-            "ถูกถมในกองนิยายเกย์", "เสี้ยนตำนิ้ว", "สำลักชานม", "แย่งพระเอกกับขจรพฤกษ์", 
-            "SugarBrownลืมอัพตอน", "หลงTakerukung", "เลือดกำเดาทะลัก", "กรี๊ดจนลืมหายใจ", 
-            "เล็บขบ", "แมวกัดตูด", "หัวเราะแรงไป", "ไถtiktokนิ้วล๊อค", "สำลักหมาล่า", 
-            "ข้าวเหนียวติดฟัน", "ไม่สระผม", "ไม่ได้เติมเกย์", "ขี้เกียจหายใจ"
+            "ถูกถมในกองนิยายเกย์",
+            "เสี้ยนตำนิ้ว",
+            "สำลักชานม",
+            "เลือดกำเดาทะลัก",
+            "กรี๊ดจนลืมหายใจ",
+            "ขี้เกียจหายใจ"
         ];
         
         const cardImage = new Image();
         cardImage.crossOrigin = "Anonymous";
         cardImage.src = 'card.jpg';
+        
         let isCardLoaded = false;
         
         cardImage.onload = function() {
@@ -255,6 +300,7 @@
             saveBtn.disabled = false; 
             canvas.style.border = 'none'; 
         };
+
         cardImage.onerror = function() {
             ctx.fillStyle = 'red';
             ctx.font = '30pt Arial';
@@ -264,28 +310,59 @@
             console.error("Error loading card.jpg. Please check the file path.");
         };
         
+        // ฟังก์ชันสำหรับวาดรูปภาพและข้อความลงบน Canvas
         function drawCard(userName, randomText = null) {
-            if (!isCardLoaded) { cardImage.onload = () => drawCard(userName, randomText); return; }
+            if (!isCardLoaded) {
+                 cardImage.onload = () => drawCard(userName, randomText);
+                 return;
+            }
+            
+            // 1. วาดพื้นหลัง card.jpg
             ctx.drawImage(cardImage, 0, 0, 1200, 1200);
+
+            // 2. ถ้ามีชื่อผู้ใช้ ให้วาด
             if (userName) {
                 ctx.fillStyle = 'white'; 
+                // ใช้ font Trajan Pro หรือ fallback เป็น Arial
                 ctx.font = 'bold 40pt "Trajan Pro", Arial'; 
                 ctx.textAlign = 'center';
-                ctx.fillText(userName, 600, 510);
+                
+                // ตำแหน่งสำหรับชื่อ: x:600 y:450
+                const nameX = 600;
+                const nameY = 450;
+                
+                ctx.fillText(userName, nameX, nameY);
             }
+
+            // 3. ถ้ามีคำทำนาย ให้วาด
             if (randomText) {
-                ctx.fillText(randomText, 600, 800);
+                // ตำแหน่งสำหรับคำทำนาย: x:600 y:800
+                const textX = 600;
+                const textY = 800;
+                
+                ctx.fillText(randomText, textX, textY);
             }
         }
+
+        // เหตุการณ์เมื่อกดปุ่ม Submit
         submitBtn.addEventListener('click', function() {
             const userName = nameInput.value.trim();
+            
+            // สุ่มคำทำนาย
             const randomText = randomTexts[Math.floor(Math.random() * randomTexts.length)];
+            
+            // วาดพร้อมแสดงชื่อและคำทำนาย
             drawCard(userName || 'ชื่อของคุณ', randomText);
         });
+        
+        // เหตุการณ์เมื่อกดปุ่ม Save Image
         saveBtn.addEventListener('click', function() {
             if (!isCardLoaded) return; 
+            
+            const dataURL = canvas.toDataURL('image/png');
+            
             const a = document.createElement('a');
-            a.href = canvas.toDataURL('image/png');
+            a.href = dataURL;
             a.download = 'Card_Prediction.png';
             document.body.appendChild(a);
             a.click();
@@ -293,54 +370,11 @@
         });
 
 
-        /* ------------------------------------- */
-        /* ส่วนที่ 8: JavaScript (จัดการ Loading & Audio) - แก้ไขตรรกะการแสดงผล */
-        /* ------------------------------------- */
-        
-        const video = document.getElementById('video-background');
-        const loadingScreen = document.getElementById('loading-screen');
-        const tapToStartButton = document.getElementById('tap-to-start');
+        // เริ่มการทำงาน
+        window.onload = function() {
+            startCountdown();
+        };
 
-        let videoReady = false;
-        
-        // ฟังก์ชันซ่อน Loading Screen
-        function hideLoadingScreen() {
-             const body = document.body;
-             
-             // ซ่อน Loading Screen
-             loadingScreen.classList.add('hidden');
-             
-             setTimeout(() => {
-                 loadingScreen.style.display = 'none';
-                 body.classList.add('loaded');
-             }, 1000);
-        }
-
-        // ฟังก์ชันสั่งเริ่มเล่น (ต้องเรียกโดย User Interaction)
-        function startMediaAndContent() {
-            // ปิดปุ่ม
-            tapToStartButton.style.display = 'none';
-
-            // 1. เล่นเพลง
-            bgMusic.muted = false;
-            bgMusic.play().catch(e => console.warn("Audio play blocked.", e));
-            
-            // 2. เล่นวิดีโอ
-            video.play().catch(e => console.warn("Video play blocked.", e));
-
-            // 3. ซ่อน Loading
-            hideLoadingScreen();
-        }
-
-        // ฟังก์ชันตรวจสอบเมื่อ Loading Image โหลดเสร็จทั้งหมด (ไม่จำเป็นต้องรอวิดีโอ)
-        function checkImagesLoaded() {
-            const loading1 = document.getElementById('loading-reaper');
-            const loading2 = document.getElementById('loading-text');
-            
-            // ใช้ Promise.all เพื่อรอรูปภาพทั้งหมด
-            Promise.all([
-                new Promise(resolve => {
-                    if (loading1.complete) resolve();
-                    else loading1.onload = resolve;
-                    loading1.onerror = resolve; 
-                }),
+    </script>
+</body>
+</html>
