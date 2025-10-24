@@ -367,14 +367,11 @@
         saveBtn.addEventListener('click', function() {
             if (!isCardLoaded) return; 
             
+            // 1. แปลง Canvas เป็น Data URL (PNG)
             const dataURL = canvas.toDataURL('image/png');
             
-            const a = document.createElement('a');
-            a.href = dataURL;
-            a.download = 'Card_Prediction.png';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            // 2. เปิดภาพในหน้า Pop-up/แท็บใหม่
+            window.open(dataURL, '_blank');
         });
 
 
