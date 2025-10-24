@@ -6,29 +6,60 @@
     <title>หน้าแรก</title>
     <style>
         /* ------------------------------------- */
-        /* ส่วนที่ 1: การตั้งค่าพื้นฐานและพื้นหลัง */
+        /* ส่วนที่ 1: การตั้งค่าพื้นฐานและพื้นหลัง (Video) */
         /* ------------------------------------- */
         body {
             margin: 0;
             padding: 0;
-            /* เพิ่ม Trajan Pro เป็นตัวเลือกแรก ถ้าไม่มีให้ใช้ serif */
             font-family: 'Trajan Pro', Georgia, serif; 
             color: #333;
-            /* พื้นหลัง: bg.jpg ล็อคไม่ไหลตาม scroll */
-            background-image: url('bg.jpg');
-            background-attachment: fixed; /* ล็อคพื้นหลัง */
-            background-size: cover; /* ครอบคลุมพื้นที่ทั้งหมด */
-            background-position: center center;
-            text-align: center; /* จัดเนื้อหาตรงกลาง (ใช้ร่วมกับ margin: auto ในบางกรณี) */
-            padding-bottom: 50px; /* เพิ่มช่องว่างด้านล่างสุด */
+            /* ลบ background-image ของ body ออก */
+            text-align: center;
+            padding-bottom: 50px;
+        }
+
+        /* ------------------------------------- */
+        /* CSS สำหรับ Video Background */
+        /* ------------------------------------- */
+        #video-background {
+            position: fixed; /* ล็อกวิดีโอไม่ให้ไหลตาม scroll */
+            right: 0;
+            bottom: 0;
+            min-width: 100%; 
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -100; /* ให้วิดีโออยู่ด้านหลังสุด */
+            overflow: hidden;
+            background-size: cover; /* เพื่อให้วิดีโอครอบคลุมพื้นที่เสมอ */
+        }
+        
+        /* ------------------------------------- */
+        /* Overlay เพื่อให้ข้อความอ่านง่ายขึ้น (แนะนำให้ใช้) */
+        /* ------------------------------------- */
+        .content-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4); /* สีดำทึบแสง 40% */
+            z-index: -99; /* อยู่ด้านบนวิดีโอ แต่อยู่ด้านล่างเนื้อหา */
         }
 
         /* จัดเนื้อหาหลักให้อยู่ตรงกลางของพื้นที่ */
         .content-container {
-            max-width: 1200px; /* กำหนดความกว้างสูงสุดของเนื้อหา */
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
+            /* เปลี่ยนสีข้อความให้เป็นสีขาวหรือสีอ่อนเพื่อให้ตัดกับวิดีโอ/Overlay */
+            color: #ffffff; 
         }
+        
+        /* เปลี่ยนสี text01.png, text02.png, text03.png ใน card section ให้เป็นสีขาว/อ่อน ถ้าเป็นไปได้ */
+        /* แต่เนื่องจากเราไม่สามารถเปลี่ยนสีไฟล์ PNG ได้ เราจะคงไว้ตามเดิม */
+        /* ส่วนนี้ควรถูกตรวจสอบและปรับปรุงเพิ่มเติมหากวิดีโอมีสีเข้มหรือสว่างเกินไป */
+
 
         /* ------------------------------------- */
         /* ส่วนที่ 2: รูปภาพและส่วนกลางหน้าจอ */
@@ -36,7 +67,7 @@
         .center-image {
             display: block;
             margin: 10px auto; 
-            max-width: 90%; /* รูปภาพจะลดขนาดลงตามความกว้างของ content-container */
+            max-width: 90%;
             height: auto;
         }
 
@@ -57,12 +88,14 @@
         /* ส่วนที่ 4: การ์ด/ใส่ชื่อ (Card Generator) - Default (Desktop) */
         /* ------------------------------------- */
         .card-generator-section {
-            background-color: rgba(255, 255, 255, 0.9);
+            /* เปลี่ยนพื้นหลังให้โปร่งใสขึ้น หรือใช้สีอื่นที่เข้ากับวิดีโอ */
+            background-color: rgba(255, 255, 255, 0.95); /* คงไว้ตามเดิมเพื่อให้ช่อง input อ่านง่าย */
             padding: 30px;
             margin: 40px auto;
             border-radius: 15px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            max-width: 600px; /* ขนาดสูงสุด Desktop */
+            max-width: 600px;
+            color: #333; /* ตั้งค่าสีข้อความใน Section นี้กลับเป็นสีเข้ม */
         }
         
         /* ช่องกรอกชื่อและปุ่ม */
@@ -71,17 +104,17 @@
             margin: 10px;
             border-radius: 5px;
             border: 1px solid #ccc;
-            width: 70%; /* ให้ input ยืดหยุ่น */
-            box-sizing: border-box; /* สำคัญเพื่อให้ padding ไม่ดันความกว้างเกิน 100% */
+            width: 70%;
+            box-sizing: border-box; 
         }
         #submitName, #saveImage {
-             width: auto; /* ปุ่มไม่จำเป็นต้องกว้าง 70% */
+             width: auto;
         }
 
         /* ส่วนแสดงรูปภาพ card.jpg (Canvas) - Default (Desktop) */
         #card-container {
             margin: 30px auto 10px;
-            width: 600px; /* ขนาดแสดงผล Desktop */
+            width: 600px; 
             height: 600px; 
             overflow: hidden;
             position: relative;
@@ -99,7 +132,7 @@
         /* ส่วนที่ 5: รูปภาพ Cover (Responsive Grid) */
         /* ------------------------------------- */
         .covers-container {
-            display: flex; /* จัดเรียงแบบแนวนอน */
+            display: flex;
             justify-content: center;
             gap: 15px; 
             margin: 40px auto;
@@ -108,7 +141,7 @@
         }
 
         .cover-item {
-            flex: 1; /* ให้แต่ละรูปขยายเท่าๆ กัน */
+            flex: 1; 
             min-width: 100px;
             max-width: 300px; 
             height: auto;
@@ -132,18 +165,17 @@
         /* MEDIA QUERIES (สำหรับ Mobile และ Tablet) */
         /* ===================================== */
 
-        /* สำหรับ Tablet (หน้าจอ 768px ลงไป) */
         @media (max-width: 768px) {
             #countdown {
-                font-size: 3.5em; /* ลดขนาด Count Down */
+                font-size: 3.5em; 
             }
             .card-generator-section {
-                 max-width: 90%; /* ให้ส่วน Card ยืดตามหน้าจอ */
+                 max-width: 90%; 
             }
             #card-container {
-                width: 90%; /* ให้ Canvas container ยืดตามหน้าจอ */
+                width: 90%;
                 height: 0;
-                padding-bottom: 90%; /* ทำให้เป็นสี่เหลี่ยมจัตุรัสตามความกว้าง (อัตราส่วน 1:1) */
+                padding-bottom: 90%;
                 position: relative;
                 margin-left: auto;
                 margin-right: auto;
@@ -154,42 +186,59 @@
                 left: 0;
             }
             .covers-container {
-                /* คง Flexbox ไว้ แต่ให้แต่ละรายการใช้พื้นที่มากขึ้น */
                 gap: 10px;
                 padding: 0 5px;
             }
         }
         
-        /* สำหรับ Mobile (หน้าจอ 480px ลงไป) */
         @media (max-width: 480px) {
             #countdown {
-                font-size: 2.5em; /* ลดขนาด Count Down อีก */
+                font-size: 2.5em;
             }
             .card-generator-section {
                  padding: 20px;
             }
-            /* จัดเรียง Cover ให้ซ้อนกันแนวตั้งเมื่อจอเล็กมาก */
             .covers-container {
                 flex-direction: column; 
                 align-items: center;
                 gap: 15px;
             }
             .cover-item {
-                max-width: 85%; /* ให้ Cover ใช้พื้นที่ส่วนใหญ่ของหน้าจอ */
+                max-width: 85%;
             }
             #nameInput {
-                width: 100%; /* ให้ Input เต็มความกว้าง */
+                width: 100%;
             }
             #submitName, #saveImage {
-                 /* จัดปุ่มให้อยู่บรรทัดเดียวกันหรือเรียงสวยงาม */
                  display: block; 
                  width: 100%;
                  margin: 10px 0;
             }
         }
+        
+        /* ปรับวิดีโอไม่ให้ยืดเกินขอบจอในแนวตั้งเมื่อจอเป็นแนวตั้ง */
+        @media (min-aspect-ratio: 16/9) {
+            #video-background {
+                width: 100%;
+                height: auto;
+            }
+        }
+        @media (max-aspect-ratio: 16/9) {
+            #video-background {
+                width: auto;
+                height: 100%;
+            }
+        }
     </style>
 </head>
 <body>
+
+    <video autoplay muted loop id="video-background">
+        <source src="BG.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    
+    <div class="content-overlay"></div>
 
     <div class="content-container">
 
@@ -216,11 +265,7 @@
             <p style="font-size: 0.8em; color: #555;">(รูปภาพที่แสดงในกรอบลดขนาดลง 50% เพื่อให้แสดงผลบนหน้าจอ)</p>
         </div>
 
-        
-
         <img src="text03.png" alt="ข้อความที่ 3" class="center-image">
-
-       
 
         <div class="covers-container">
             <a href="https://SugarBrown.readawrite.com" target="_blank" class="cover-item">
@@ -242,24 +287,19 @@
         /* ------------------------------------- */
 
         function startCountdown() {
-            // วันที่และเวลาเป้าหมาย: 00:00:00 ของวันที่ 31 October 2025 ในเขตเวลาของไทย (UTC+7)
             const targetDate = new Date('October 31, 2025 00:00:00 GMT+07:00').getTime();
             const countdownEl = document.getElementById('countdown');
 
-            // อัปเดตทุก 1 วินาที
             const interval = setInterval(function() {
                 const now = new Date().getTime();
                 const distance = targetDate - now;
 
-                // คำนวณเวลาที่เหลือ
                 const days = Math.floor(distance / (1000 * 60 * 60 * 24));
                 const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
                 const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
                 const seconds = Math.floor((distance % (1000 * 60)) / 1000).toString().padStart(2, '0');
 
-                // แสดงผลลัพธ์
                 if (distance > 0) {
-                    // แสดงผลแบบรวมชั่วโมงทั้งหมด
                     const totalHours = days * 24 + parseInt(hours);
                     countdownEl.innerHTML = `${totalHours.toString().padStart(2, '0')} : ${minutes} : ${seconds}`;
                 } else {
@@ -270,7 +310,7 @@
         }
 
         /* ------------------------------------- */
-        /* ส่วนที่ 7: JavaScript (สร้างการ์ด) - แก้ไขการแสดงผลเริ่มต้นและตำแหน่ง */
+        /* ส่วนที่ 7: JavaScript (สร้างการ์ด) */
         /* ------------------------------------- */
 
         const canvas = document.getElementById('cardCanvas');
@@ -321,33 +361,26 @@
             console.error("Error loading card.jpg. Please check the file path.");
         };
         
-        // ฟังก์ชันสำหรับวาดรูปภาพและข้อความลงบน Canvas
         function drawCard(userName, randomText = null) {
             if (!isCardLoaded) {
                  cardImage.onload = () => drawCard(userName, randomText);
                  return;
             }
             
-            // 1. วาดพื้นหลัง card.jpg
             ctx.drawImage(cardImage, 0, 0, 1200, 1200);
 
-            // 2. ถ้ามีชื่อผู้ใช้ ให้วาด
             if (userName) {
                 ctx.fillStyle = 'white'; 
-                // ใช้ font Trajan Pro หรือ fallback เป็น Arial
                 ctx.font = 'bold 40pt "Trajan Pro", Arial'; 
                 ctx.textAlign = 'center';
                 
-                // ตำแหน่งสำหรับชื่อ: x:600 y:ุ550
                 const nameX = 600;
-                const nameY = 500;
+                const nameY = 510;
                 
                 ctx.fillText(userName, nameX, nameY);
             }
 
-            // 3. ถ้ามีคำทำนาย ให้วาด
             if (randomText) {
-                // ตำแหน่งสำหรับคำทำนาย: x:600 y:800
                 const textX = 600;
                 const textY = 800;
                 
@@ -355,18 +388,13 @@
             }
         }
 
-        // เหตุการณ์เมื่อกดปุ่ม Submit
         submitBtn.addEventListener('click', function() {
             const userName = nameInput.value.trim();
-            
-            // สุ่มคำทำนาย
             const randomText = randomTexts[Math.floor(Math.random() * randomTexts.length)];
             
-            // วาดพร้อมแสดงชื่อและคำทำนาย
             drawCard(userName || 'ชื่อของคุณ', randomText);
         });
         
-        // เหตุการณ์เมื่อกดปุ่ม Save Image
         saveBtn.addEventListener('click', function() {
             if (!isCardLoaded) return; 
             
@@ -380,8 +408,6 @@
             document.body.removeChild(a);
         });
 
-
-        // เริ่มการทำงาน
         window.onload = function() {
             startCountdown();
         };
