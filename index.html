@@ -11,21 +11,20 @@
         body {
             margin: 0;
             padding: 0;
-            /* เพิ่ม Trajan Pro เป็นตัวเลือกแรก ถ้าไม่มีให้ใช้ serif */
             font-family: 'Trajan Pro', Georgia, serif; 
             color: #333;
-            /* พื้นหลัง: bg.jpg ล็อคไม่ไหลตาม scroll */
+            /* bg.jpg ถูกตั้งค่าเป็น responsive โดย background-size: cover; อยู่แล้ว */
             background-image: url('bg.jpg');
-            background-attachment: fixed; /* ล็อคพื้นหลัง */
-            background-size: cover; /* ครอบคลุมพื้นที่ทั้งหมด */
+            background-attachment: fixed; 
+            background-size: cover; 
             background-position: center center;
-            text-align: center; /* จัดเนื้อหาตรงกลาง (ใช้ร่วมกับ margin: auto ในบางกรณี) */
-            padding-bottom: 50px; /* เพิ่มช่องว่างด้านล่างสุด */
+            text-align: center;
+            padding-bottom: 50px;
         }
 
         /* จัดเนื้อหาหลักให้อยู่ตรงกลางของพื้นที่ */
         .content-container {
-            max-width: 1200px; /* กำหนดความกว้างสูงสุดของเนื้อหา */
+            max-width: 1200px; 
             margin: 0 auto;
             padding: 20px;
         }
@@ -36,7 +35,8 @@
         .center-image {
             display: block;
             margin: 10px auto; 
-            max-width: 90%; /* รูปภาพจะลดขนาดลงตามความกว้างของ content-container */
+            /* max-width: 90% ตรงนี้ทำงานได้ดีสำหรับรูปภาพส่วนใหญ่ */
+            max-width: 90%; 
             height: auto;
         }
 
@@ -44,7 +44,7 @@
         /* ส่วนที่ 3: นับถอยหลัง (Countdown) - Default (Desktop) */
         /* ------------------------------------- */
         #countdown {
-            font-size: 5.25em; /* ขนาด Desktop */
+            font-size: 5.25em; 
             font-weight: bold;
             color: #d7c1a0; 
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); 
@@ -62,7 +62,7 @@
             margin: 40px auto;
             border-radius: 15px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            max-width: 600px; /* ขนาดสูงสุด Desktop */
+            max-width: 600px;
         }
         
         /* ช่องกรอกชื่อและปุ่ม */
@@ -71,17 +71,17 @@
             margin: 10px;
             border-radius: 5px;
             border: 1px solid #ccc;
-            width: 70%; /* ให้ input ยืดหยุ่น */
-            box-sizing: border-box; /* สำคัญเพื่อให้ padding ไม่ดันความกว้างเกิน 100% */
+            width: 70%; 
+            box-sizing: border-box;
         }
         #submitName, #saveImage {
-             width: auto; /* ปุ่มไม่จำเป็นต้องกว้าง 70% */
+             width: auto; 
         }
 
         /* ส่วนแสดงรูปภาพ card.jpg (Canvas) - Default (Desktop) */
         #card-container {
             margin: 30px auto 10px;
-            width: 600px; /* ขนาดแสดงผล Desktop */
+            width: 600px; 
             height: 600px; 
             overflow: hidden;
             position: relative;
@@ -99,7 +99,7 @@
         /* ส่วนที่ 5: รูปภาพ Cover (Responsive Grid) */
         /* ------------------------------------- */
         .covers-container {
-            display: flex; /* จัดเรียงแบบแนวนอน */
+            display: flex; 
             justify-content: center;
             gap: 15px; 
             margin: 40px auto;
@@ -108,7 +108,7 @@
         }
 
         .cover-item {
-            flex: 1; /* ให้แต่ละรูปขยายเท่าๆ กัน */
+            flex: 1; 
             min-width: 100px;
             max-width: 300px; 
             height: auto;
@@ -135,15 +135,15 @@
         /* สำหรับ Tablet (หน้าจอ 768px ลงไป) */
         @media (max-width: 768px) {
             #countdown {
-                font-size: 3.5em; /* ลดขนาด Count Down */
+                font-size: 3.5em; 
             }
             .card-generator-section {
-                 max-width: 90%; /* ให้ส่วน Card ยืดตามหน้าจอ */
+                 max-width: 90%; 
             }
             #card-container {
-                width: 90%; /* ให้ Canvas container ยืดตามหน้าจอ */
+                width: 90%; 
                 height: 0;
-                padding-bottom: 90%; /* ทำให้เป็นสี่เหลี่ยมจัตุรัสตามความกว้าง (อัตราส่วน 1:1) */
+                padding-bottom: 90%; 
                 position: relative;
                 margin-left: auto;
                 margin-right: auto;
@@ -154,7 +154,6 @@
                 left: 0;
             }
             .covers-container {
-                /* คง Flexbox ไว้ แต่ให้แต่ละรายการใช้พื้นที่มากขึ้น */
                 gap: 10px;
                 padding: 0 5px;
             }
@@ -163,25 +162,23 @@
         /* สำหรับ Mobile (หน้าจอ 480px ลงไป) */
         @media (max-width: 480px) {
             #countdown {
-                font-size: 2.5em; /* ลดขนาด Count Down อีก */
+                font-size: 2.5em; 
             }
             .card-generator-section {
                  padding: 20px;
             }
-            /* จัดเรียง Cover ให้ซ้อนกันแนวตั้งเมื่อจอเล็กมาก */
             .covers-container {
                 flex-direction: column; 
                 align-items: center;
                 gap: 15px;
             }
             .cover-item {
-                max-width: 85%; /* ให้ Cover ใช้พื้นที่ส่วนใหญ่ของหน้าจอ */
+                max-width: 85%; 
             }
             #nameInput {
-                width: 100%; /* ให้ Input เต็มความกว้าง */
+                width: 100%; 
             }
             #submitName, #saveImage {
-                 /* จัดปุ่มให้อยู่บรรทัดเดียวกันหรือเรียงสวยงาม */
                  display: block; 
                  width: 100%;
                  margin: 10px 0;
@@ -204,7 +201,7 @@
         
 
         <div class="card-generator-section">
-            <img src="text02.png" class="center-image" style="max-width: 600px;">
+            <img src="text02.png" class="center-image" style="width: 100%; max-width: 600px;">
             <input type="text" id="nameInput" placeholder="ใส่ชื่อของคุณที่นี่">
             <button id="submitName">พร้อมตกนรก</button>
 
