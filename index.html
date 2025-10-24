@@ -6,7 +6,7 @@
     <title>หน้าแรก</title>
     <style>
         /* ------------------------------------- */
-        /* ส่วนที่ 0: LOADING SCREEN - แก้ไขสีพื้นหลัง */
+        /* ส่วนที่ 0: LOADING SCREEN */
         /* ------------------------------------- */
         #loading-screen {
             position: fixed;
@@ -14,7 +14,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: #000000; /* แก้ไขเป็นสีดำตามต้องการ */
+            background-color: #000000;
             z-index: 9999;
             display: flex;
             flex-direction: column;
@@ -59,7 +59,7 @@
             cursor: pointer;
             font-family: 'Trajan Pro', Georgia, serif;
             font-size: 1.2em;
-            display: none; /* ซ่อนไว้ก่อนจนกว่าวิดีโอจะพร้อม */
+            display: none; /* ซ่อนไว้ก่อน */
         }
         #tap-to-start.visible {
             display: block;
@@ -76,93 +76,53 @@
             color: #333;
             text-align: center;
             padding-bottom: 50px;
+            /* แก้ไข: ซ่อนเนื้อหาหลักไว้ก่อน แต่ให้พื้นหลัง Body เป็นสีดำ */
             visibility: hidden; 
-            /* กำหนดสีพื้นหลังให้เป็นสีดำตั้งแต่เริ่มต้น */
             background-color: #000000; 
         }
 
         body.loaded {
             visibility: visible;
         }
-        /* CSS สำหรับ Video Background คงเดิม */
+
+        /* ------------------------------------- */
+        /* CSS สำหรับ Video Background */
+        /* ------------------------------------- */
         #video-background {
             position: fixed; right: 0; bottom: 0; min-width: 100%; min-height: 100%;
             width: auto; height: auto; z-index: -100; overflow: hidden; background-size: cover;
         }
-        /* Overlay คงเดิม */
+        
+        /* ------------------------------------- */
+        /* Overlay เพื่อให้ข้อความอ่านง่ายขึ้น (แนะนำให้ใช้) */
+        /* ------------------------------------- */
         .content-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.4); z-index: -99;
         }
-        /* จัดเนื้อหาหลักคงเดิม */
+
+        /* จัดเนื้อหาหลักให้อยู่ตรงกลางของพื้นที่ */
         .content-container {
             max-width: 1200px; margin: 0 auto; padding: 20px; color: #ffffff; 
+            /* แก้ไข: ให้เนื้อหาหลักอยู่ด้านบนสุดของวิดีโอและ overlay */
+            position: relative; 
+            z-index: 1; 
         }
         
         /* ------------------------------------- */
-        /* ส่วนที่ 2: รูปภาพและส่วนกลางหน้าจอ */
+        /* ส่วนที่ 2-5 และ Media Queries คงเดิม */
         /* ------------------------------------- */
-        .center-image {
-            display: block; margin: 10px auto; max-width: 90%; height: auto;
-        }
-
-        /* ------------------------------------- */
-        /* ส่วนที่ 3: นับถอยหลัง (Countdown) - Default (Desktop) */
-        /* ------------------------------------- */
-        #countdown {
-            font-size: 5.25em; font-weight: bold; color: #d7c1a0; 
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); margin: 5px 0; padding: 15px 0; 
-            display: inline-block; 
-        }
-
-        /* ------------------------------------- */
-        /* ส่วนที่ 4: การ์ด/ใส่ชื่อ (Card Generator) - Default (Desktop) */
-        /* ------------------------------------- */
-        .card-generator-section {
-            background-color: rgba(255, 255, 255, 0.95); padding: 30px; margin: 40px auto;
-            border-radius: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            max-width: 600px; color: #333; 
-        }
-        
-        /* ช่องกรอกชื่อและปุ่ม */
-        #nameInput, #submitName, #saveImage {
-            padding: 10px; margin: 10px; border-radius: 5px; border: 1px solid #ccc;
-            width: 70%; box-sizing: border-box; 
-        }
+        .center-image { display: block; margin: 10px auto; max-width: 90%; height: auto; }
+        #countdown { font-size: 5.25em; font-weight: bold; color: #d7c1a0; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); margin: 5px 0; padding: 15px 0; display: inline-block; }
+        .card-generator-section { background-color: rgba(255, 255, 255, 0.95); padding: 30px; margin: 40px auto; border-radius: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); max-width: 600px; color: #333; }
+        #nameInput, #submitName, #saveImage { padding: 10px; margin: 10px; border-radius: 5px; border: 1px solid #ccc; width: 70%; box-sizing: border-box; }
         #submitName, #saveImage { width: auto; }
-
-        /* ส่วนแสดงรูปภาพ card.jpg (Canvas) - Default (Desktop) */
-        #card-container {
-            margin: 30px auto 10px; width: 600px; height: 600px; overflow: hidden; position: relative;
-        }
-
-        /* Canvas สำหรับวาดรูปภาพและข้อความ */
-        #cardCanvas {
-            width: 100%; height: 100%; display: block; border: 1px solid #ccc; 
-        }
-
-        /* ------------------------------------- */
-        /* ส่วนที่ 5: รูปภาพ Cover (Responsive Grid) */
-        /* ------------------------------------- */
-        .covers-container {
-            display: flex; justify-content: center; gap: 15px; 
-            margin: 40px auto; padding: 0 10px; max-width: 95%;
-        }
-
-        .cover-item {
-            flex: 1; min-width: 100px; max-width: 300px; height: auto;
-            transition: transform 0.3s ease; border-radius: 8px; overflow: hidden;
-        }
-
+        #card-container { margin: 30px auto 10px; width: 600px; height: 600px; overflow: hidden; position: relative; }
+        #cardCanvas { width: 100%; height: 100%; display: block; border: 1px solid #ccc; }
+        .covers-container { display: flex; justify-content: center; gap: 15px; margin: 40px auto; padding: 0 10px; max-width: 95%; }
+        .cover-item { flex: 1; min-width: 100px; max-width: 300px; height: auto; transition: transform 0.3s ease; border-radius: 8px; overflow: hidden; }
         .cover-item:hover { transform: scale(1.05); }
-
-        .cover-item img {
-            display: block; width: 100%; height: auto; border-radius: 5px;
-        }
-
-        /* ===================================== */
-        /* MEDIA QUERIES (สำหรับ Mobile และ Tablet) */
-        /* ===================================== */
+        .cover-item img { display: block; width: 100%; height: auto; border-radius: 5px; }
 
         @media (max-width: 768px) {
             #countdown { font-size: 3.5em; }
@@ -195,12 +155,10 @@
     
     <audio id="bg-music" loop muted>
         <source src="halloween.mp3" type="audio/mp3">
-        Your browser does not support the audio element.
     </audio>
 
     <video muted loop id="video-background">
         <source src="BG.mp4" type="video/mp4">
-        Your browser does not support the video tag.
     </video>
     
     <div class="content-overlay"></div>
@@ -248,7 +206,7 @@
 
     <script>
         /* ------------------------------------- */
-        /* ส่วนที่ 6: JavaScript (นับถอยหลัง) */
+        /* ส่วนที่ 6-7: JavaScript (Countdown & Card) - คงเดิม */
         /* ------------------------------------- */
 
         function startCountdown() {
@@ -258,7 +216,6 @@
             const interval = setInterval(function() {
                 const now = new Date().getTime();
                 const distance = targetDate - now;
-
                 const days = Math.floor(distance / (1000 * 60 * 60 * 24));
                 const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
                 const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
@@ -274,17 +231,12 @@
             }, 1000);
         }
 
-        /* ------------------------------------- */
-        /* ส่วนที่ 7: JavaScript (สร้างการ์ด) */
-        /* ------------------------------------- */
-
         const canvas = document.getElementById('cardCanvas');
         const ctx = canvas.getContext('2d');
         const submitBtn = document.getElementById('submitName');
         const saveBtn = document.getElementById('saveImage');
         const nameInput = document.getElementById('nameInput');
         const bgMusic = document.getElementById('bg-music');
-
         const randomTexts = [
             "ถูกถมในกองนิยายเกย์", "เสี้ยนตำนิ้ว", "สำลักชานม", "แย่งพระเอกกับขจรพฤกษ์", 
             "SugarBrownลืมอัพตอน", "หลงTakerukung", "เลือดกำเดาทะลัก", "กรี๊ดจนลืมหายใจ", 
@@ -295,7 +247,6 @@
         const cardImage = new Image();
         cardImage.crossOrigin = "Anonymous";
         cardImage.src = 'card.jpg';
-        
         let isCardLoaded = false;
         
         cardImage.onload = function() {
@@ -304,7 +255,6 @@
             saveBtn.disabled = false; 
             canvas.style.border = 'none'; 
         };
-
         cardImage.onerror = function() {
             ctx.fillStyle = 'red';
             ctx.font = '30pt Arial';
@@ -315,54 +265,36 @@
         };
         
         function drawCard(userName, randomText = null) {
-            if (!isCardLoaded) {
-                 cardImage.onload = () => drawCard(userName, randomText);
-                 return;
-            }
-            
+            if (!isCardLoaded) { cardImage.onload = () => drawCard(userName, randomText); return; }
             ctx.drawImage(cardImage, 0, 0, 1200, 1200);
-
             if (userName) {
                 ctx.fillStyle = 'white'; 
                 ctx.font = 'bold 40pt "Trajan Pro", Arial'; 
                 ctx.textAlign = 'center';
-                
-                const nameX = 600;
-                const nameY = 510;
-                
-                ctx.fillText(userName, nameX, nameY);
+                ctx.fillText(userName, 600, 510);
             }
-
             if (randomText) {
-                const textX = 600;
-                const textY = 800;
-                
-                ctx.fillText(randomText, textX, textY);
+                ctx.fillText(randomText, 600, 800);
             }
         }
-
         submitBtn.addEventListener('click', function() {
             const userName = nameInput.value.trim();
             const randomText = randomTexts[Math.floor(Math.random() * randomTexts.length)];
-            
             drawCard(userName || 'ชื่อของคุณ', randomText);
         });
-        
         saveBtn.addEventListener('click', function() {
             if (!isCardLoaded) return; 
-            
-            const dataURL = canvas.toDataURL('image/png');
-            
             const a = document.createElement('a');
-            a.href = dataURL;
+            a.href = canvas.toDataURL('image/png');
             a.download = 'Card_Prediction.png';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
         });
 
+
         /* ------------------------------------- */
-        /* ส่วนที่ 8: JavaScript (จัดการ Loading & Audio) */
+        /* ส่วนที่ 8: JavaScript (จัดการ Loading & Audio) - แก้ไขตรรกะการแสดงผล */
         /* ------------------------------------- */
         
         const video = document.getElementById('video-background');
@@ -370,13 +302,12 @@
         const tapToStartButton = document.getElementById('tap-to-start');
 
         let videoReady = false;
-        let imagesReady = false;
         
         // ฟังก์ชันซ่อน Loading Screen
         function hideLoadingScreen() {
              const body = document.body;
              
-             // 1. ซ่อน Loading Screen
+             // ซ่อน Loading Screen
              loadingScreen.classList.add('hidden');
              
              setTimeout(() => {
@@ -401,7 +332,7 @@
             hideLoadingScreen();
         }
 
-        // ฟังก์ชันตรวจสอบเมื่อ Loading Image โหลดเสร็จทั้งหมด
+        // ฟังก์ชันตรวจสอบเมื่อ Loading Image โหลดเสร็จทั้งหมด (ไม่จำเป็นต้องรอวิดีโอ)
         function checkImagesLoaded() {
             const loading1 = document.getElementById('loading-reaper');
             const loading2 = document.getElementById('loading-text');
@@ -411,52 +342,5 @@
                 new Promise(resolve => {
                     if (loading1.complete) resolve();
                     else loading1.onload = resolve;
-                    loading1.onerror = resolve; // ดัก error เผื่อโหลดไม่ได้ แต่ก็ถือว่ารูปภาพพร้อมแล้ว
+                    loading1.onerror = resolve; 
                 }),
-                new Promise(resolve => {
-                    if (loading2.complete) resolve();
-                    else loading2.onload = resolve;
-                    loading2.onerror = resolve;
-                })
-            ]).then(() => {
-                imagesReady = true;
-                // หากวิดีโอพร้อมด้วย ให้แสดงปุ่ม Tap to Start หรือซ่อน Loading (สำหรับ Desktop ที่ Autoplay ได้)
-                if (videoReady) {
-                    // หากเป็น Mobile (ต้องการ User Interaction) ให้แสดงปุ่ม
-                    if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
-                         tapToStartButton.classList.add('visible');
-                    } else {
-                         // เป็น Desktop น่าจะเล่นได้อัตโนมัติ
-                         startMediaAndContent();
-                    }
-                }
-            });
-        }
-        
-        // Event Listener สำหรับปุ่ม TAP TO START
-        tapToStartButton.addEventListener('click', startMediaAndContent);
-
-
-        window.onload = function() {
-            startCountdown();
-            
-            // 1. รอวิดีโอ BG โหลด
-            video.addEventListener('canplaythrough', function() {
-                videoReady = true;
-                // ถ้า Loading Image โหลดเสร็จแล้ว ให้จัดการแสดงผลต่อ
-                if (imagesReady) {
-                    if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
-                        tapToStartButton.classList.add('visible');
-                    } else {
-                        startMediaAndContent();
-                    }
-                }
-            }, { once: true });
-
-            // 2. เริ่มตรวจสอบ Loading Images
-            checkImagesLoaded();
-
-        };
-    </script>
-</body>
-</html>
