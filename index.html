@@ -35,7 +35,6 @@
         .center-image {
             display: block;
             margin: 10px auto; 
-            /* max-width: 90% ตรงนี้ทำงานได้ดีสำหรับรูปภาพส่วนใหญ่ */
             max-width: 90%; 
             height: auto;
         }
@@ -275,25 +274,13 @@
         const submitBtn = document.getElementById('submitName');
         const saveBtn = document.getElementById('saveImage');
         const nameInput = document.getElementById('nameInput');
+        const contentContainer = document.querySelector('.content-container'); // อ้างอิงถึงเนื้อหาหลัก
 
         const randomTexts = [
-            "ถูกถมในกองนิยายเกย์",
-            "เสี้ยนตำนิ้ว",
-            "สำลักชานม",
-            "แย่งพระเอกกับขจรพฤกษ์",
-            "SugarBrownลืมอัพตอน",
-            "หลงTakerukung",
-            "เลือดกำเดาทะลัก",
-            "กรี๊ดจนลืมหายใจ",
-            "เล็บขบ",
-            "แมวกัดตูด",
-            "หัวเราะแรงไป",
-            "ไถtiktokนิ้วล๊อค",
-            "สำลักหมาล่า",
-            "ข้าวเหนียวติดฟัน",
-            "ไม่สระผม",
-            "ไม่ได้เติมเกย์",
-            "ขี้เกียจหายใจ"
+            "ถูกถมในกองนิยายเกย์", "เสี้ยนตำนิ้ว", "สำลักชานม", "แย่งพระเอกกับขจรพฤกษ์", 
+            "SugarBrownลืมอัพตอน", "หลงTakerukung", "เลือดกำเดาทะลัก", "กรี๊ดจนลืมหายใจ", 
+            "เล็บขบ", "แมวกัดตูด", "หัวเราะแรงไป", "ไถtiktokนิ้วล๊อค", "สำลักหมาล่า", 
+            "ข้าวเหนียวติดฟัน", "ไม่สระผม", "ไม่ได้เติมเกย์", "ขี้เกียจหายใจ"
         ];
         
         const cardImage = new Image();
@@ -363,21 +350,84 @@
             drawCard(userName || 'ชื่อของคุณ', randomText);
         });
         
-        // เหตุการณ์เมื่อกดปุ่ม Save Image
+        // **ฟังก์ชันใหม่: แสดงภาพเต็มจอในหน้าต่างเดิม**
+        function showFullImage(dataURL) {
+            // สร้าง <img> element
+            const img = document.createElement('img');
+            img.src = dataURL;
+            img.style.maxWidth = '100%';
+            img.style.maxHeight = '100vh';
+            img.style.display = 'block';
+            img.style.margin = '20px auto';
+            
+            // สร้าง container สำหรับภาพ
+            const imageWrapper = document.createElement('div');
+            imageWrapper.id = 'full-image-display';
+            imageWrapper.style.position = 'fixed';
+            imageWrapper.style.top = '0';
+            imageWrapper.style.left = '0';
+            imageWrapper.style.width = '100%';
+            imageWrapper.style.height = '100%';
+            imageWrapper.style.backgroundColor = '#000000'; // พื้นหลังสีดำ
+            imageWrapper.style.zIndex = '9999'; // ต้องสูงมากพอที่จะบังทุกอย่าง
+            imageWrapper.style.overflow = 'auto'; 
+            imageWrapper.style.display = 'flex';
+            imageWrapper.style.justifyContent = 'center';
+            imageWrapper.style.alignItems = 'center';
+            
+            imageWrapper.appendChild(img);
+            document.body.appendChild(imageWrapper);
+            
+            // ซ่อนเนื้อหาหลัก
+            contentContainer.style.display = 'none';
+
+            // **เพิ่ม History State** เพื่อดักจับปุ่ม Back ของ Browser
+            history.pushState({ image: true }, '', '#viewimage');
+        }
+
+        // **เหตุการณ์เมื่อกดปุ่ม Save Image**
         saveBtn.addEventListener('click', function() {
             if (!isCardLoaded) return; 
             
             // 1. แปลง Canvas เป็น Data URL (PNG)
             const dataURL = canvas.toDataURL('image/png');
             
-            // 2. เปิดภาพในหน้า Pop-up/แท็บใหม่
-            window.open(dataURL, '_blank');
+            // 2. แสดงภาพในหน้า Browser เดิม
+            showFullImage(dataURL);
+        });
+        
+        // **ดักจับการกดปุ่ม Back ของ Browser**
+        window.addEventListener('popstate', function(event) {
+            const fullImageDisplay = document.getElementById('full-image-display');
+            
+            // ตรวจสอบว่ากำลังอยู่บนหน้าแสดงภาพหรือไม่
+            // event.state?.image ตรวจสอบว่า state ล่าสุดมี flag 'image' หรือไม่
+            if (fullImageDisplay && !event.state?.image) {
+                // ลบ image wrapper
+                fullImageDisplay.remove();
+                // แสดงเนื้อหาหลักกลับมา
+                contentContainer.style.display = 'block';
+                // ล้าง hash ออกจาก URL (ป้องกันการกด Back ซ้ำซ้อน)
+                if (window.location.hash === '#viewimage') {
+                    history.replaceState({}, document.title, window.location.pathname + window.location.search);
+                }
+            } else if (!fullImageDisplay && event.state?.image) {
+                // กรณีพิเศษ: ผู้ใช้กด Back กลับมาที่ hash แต่ Element ถูกลบไปแล้ว (อาจเกิดขึ้นได้ยาก แต่ดักไว้)
+                contentContainer.style.display = 'block';
+            }
         });
 
 
         // เริ่มการทำงาน
         window.onload = function() {
             startCountdown();
+            
+            // ตรวจสอบว่าผู้ใช้เข้ามาที่หน้านี้พร้อม hash #viewimage หรือไม่ (กรณีมีการ Forward หรือ Refresh ขณะดูภาพ)
+            if (window.location.hash === '#viewimage') {
+                // ถ้าเข้ามาพร้อม hash #viewimage ให้กลับไปหน้าหลักทันที
+                history.replaceState({}, document.title, window.location.pathname + window.location.search);
+                contentContainer.style.display = 'block';
+            }
         };
 
     </script>
