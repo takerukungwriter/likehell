@@ -3,236 +3,215 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Landing Page - Custom Features</title>
+    <title>Landing Page - Custom Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* 1. Background และการตั้งค่าพื้นฐาน */
+        /* 1. สไตล์สำหรับ Background และภาพรวมของหน้า */
         body {
+            font-family: 'Sarabun', sans-serif;
             margin: 0;
             padding: 0;
-            font-family: sans-serif;
-            color: white;
-            /* แบคกราวน์แบบล๊อคไม่ไหลตาม scroll */
+            color: #333;
+            /* แบคกราวน์ที่ล๊อคไม่ไหลตาม scroll */
             background-image: url('bg.jpg');
             background-size: cover;
-            background-attachment: fixed;
+            background-attachment: fixed; /* ล็อคไม่ให้ไหล */
             background-position: center center;
-            min-height: 100vh; /* เพื่อให้เห็น background เต็มจอ */
+            line-height: 1.6;
         }
 
         .container {
-            width: 90%;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px 0;
+            padding: 20px;
+            /* เพิ่มพื้นหลังแบบโปร่งแสงให้กับเนื้อหาเพื่อให้มองเห็นง่ายขึ้น */
+            background-color: rgba(255, 255, 255, 0.95); 
+            min-height: 100vh;
+        }
+
+        .section {
+            padding: 40px 0;
             text-align: center;
         }
 
-        /* 2. Text01.png จัดกลาง */
-        .header-image {
-            margin: 40px auto;
+        /* 2. สไตล์สำหรับรูปภาพจัดกลาง */
+        .centered-img {
             display: block;
+            margin: 0 auto;
             max-width: 100%;
             height: auto;
         }
 
-        /* 3. Countdown */
-        #countdown {
-            font-size: 3em;
+        /* 3. สไตล์สำหรับ Countdown */
+        #countdown-timer {
+            font-size: 4em;
             font-weight: bold;
             color: #FFD700; /* สีทอง */
-            margin: 20px 0 50px 0;
-            text-shadow: 2px 2px 4px #000;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin: 20px 0;
         }
 
-        /* 4. Card Generator Section */
+        /* 4. สไตล์สำหรับ Name Card Generator */
         .card-generator {
-            background-color: rgba(0, 0, 0, 0.7);
-            padding: 40px 20px;
+            background-color: #f4f4f4;
+            padding: 30px;
             border-radius: 10px;
-            margin-bottom: 50px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
         }
 
         .input-group {
             margin-bottom: 20px;
         }
 
-        .input-group input[type="text"] {
-            padding: 10px;
-            width: 300px;
-            max-width: 80%;
-            border: none;
+        .input-group input[type="text"], 
+        .input-group button {
+            padding: 10px 15px;
+            font-size: 1.1em;
             border-radius: 5px;
-            font-size: 16px;
+            border: 1px solid #ccc;
+        }
+
+        .input-group input[type="text"] {
+            width: 70%;
+            max-width: 400px;
         }
 
         .input-group button {
-            padding: 10px 20px;
-            margin-left: 10px;
             background-color: #007bff;
             color: white;
             border: none;
-            border-radius: 5px;
             cursor: pointer;
-            font-size: 16px;
+            margin-left: 10px;
+            transition: background-color 0.3s;
         }
-        
+
         .input-group button:hover {
             background-color: #0056b3;
         }
 
-        /* Canvas และการตั้งค่ารูป Card */
+        /* Canvas และการแสดงผล */
         #cardCanvas {
-            border: 1px solid #444;
+            border: 1px solid #ddd;
             display: block;
-            margin: 20px auto;
-            /* ตั้งค่าขนาด Canvas ตามที่ระบุ */
-            width: 1200px;
-            height: 1200px;
+            margin: 20px auto 10px;
+            /* กำหนดขนาดตามโจทย์ แต่จะถูกปรับขนาดตาม CSS เพื่อให้ responsive */
+        }
+        
+        .canvas-container {
+            max-width: 100%;
+            overflow-x: auto; /* ให้เลื่อนได้ถ้าหน้าจอเล็กเกินไป */
         }
 
-        /* 5. Text03.png จัดกลาง */
-        .section-image {
-            margin: 50px auto 30px auto;
-            display: block;
-            max-width: 80%;
-            height: auto;
+        #saveButton {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1.1em;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
 
-        /* 6. Cover Images Responsive Grid */
+        #saveButton:hover {
+            background-color: #1e7e34;
+        }
+
+        /* 5. สไตล์สำหรับ Cover Images (Responsive) */
         .cover-gallery {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap; /* ให้ภาพลงบรรทัดใหม่เมื่อจอมันเล็กเกินไป */
-            margin-bottom: 50px;
+            display: flex; /* จัดเรียงในแนวนอน */
+            justify-content: center; /* จัดให้อยู่ตรงกลาง */
+            gap: 15px; /* ระยะห่างระหว่างรูป */
+            flex-wrap: wrap; /* ให้ขึ้นบรรทัดใหม่เมื่อจอเล็ก */
         }
 
-        .cover-item {
-            flex: 1 1 300px; /* ยืดหดได้, พื้นฐาน 300px */
-            max-width: 350px; /* จำกัดขนาดสูงสุด */
-            height: auto;
-            transition: transform 0.2s;
+        .cover-gallery a {
+            display: block;
+            flex: 1 1 30%; /* ให้แต่ละรูปกินพื้นที่ประมาณ 30% และยืด/หดได้ */
+            max-width: 300px; /* จำกัดขนาดสูงสุดต่อรูป */
+            min-width: 150px; /* ขนาดขั้นต่ำ */
+            box-sizing: border-box;
+            text-decoration: none;
+            transition: transform 0.3s;
         }
 
-        .cover-item:hover {
+        .cover-gallery a:hover {
             transform: scale(1.05);
         }
 
-        .cover-item a {
-            display: block;
-        }
-
-        .cover-item img {
+        .cover-gallery img {
             width: 100%;
             height: auto;
             display: block;
             border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
-        /* ปุ่ม Save Image */
-        #saveImage {
-            padding: 10px 20px;
-            background-color: #28a745; /* สีเขียว */
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            margin-top: 10px;
-        }
-
-        #saveImage:hover {
-            background-color: #1e7e34;
+        /* Responsive ปรับสำหรับหน้าจอที่เล็กกว่า */
+        @media (max-width: 768px) {
+            #countdown-timer {
+                font-size: 2.5em;
+            }
+            .cover-gallery a {
+                flex: 1 1 100%; /* ให้รูปอยู่บรรทัดละรูปสำหรับหน้าจอเล็กมาก */
+                max-width: 80%;
+            }
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        
-        <img src="text01.png" alt="Text 01" class="header-image">
 
-        <div id="countdown">
-            <span id="hours">00</span> : 
-            <span id="minutes">00</span> : 
-            <span id="seconds">00</span>
+        <div class="section">
+            <img src="text01.png" alt="Text 01" class="centered-img">
         </div>
 
-        <hr style="border-color: rgba(255, 255, 255, 0.3); margin: 50px 0;">
+        <div class="section">
+            <h2>เหลือเวลาจนถึง 00:00 31 ตุลาคม 2025</h2>
+            <div id="countdown-timer"></div>
+        </div>
 
-        <div class="card-generator">
-            <h2>สร้างคำทำนาย</h2>
+        <div class="section card-generator">
+            <h2>✨ สร้าง Name Card สุดพิเศษ</h2>
             <div class="input-group">
-                <input type="text" id="userName" placeholder="ใส่ชื่อของคุณที่นี่">
-                <button onclick="generateCard()">รับคำทำนาย</button>
+                <input type="text" id="userNameInput" placeholder="ใส่ชื่อของคุณที่นี่">
+                <button onclick="generateCard()">ยืนยันชื่อ (Submit)</button>
             </div>
-
-            <canvas id="cardCanvas" width="1200" height="1200"></canvas>
             
-            <button id="saveImage">บันทึกรูปภาพ</button>
+            <div class="canvas-container">
+                <canvas id="cardCanvas" width="1200" height="1200"></canvas>
+            </div>
+
+            <button id="saveButton" disabled onclick="saveImage()">บันทึกรูปภาพ (Save Image) 💾</button>
+            <p style="margin-top: 10px; font-size: 0.9em; color: gray;">*กรุณายืนยันชื่อก่อนจึงจะสามารถบันทึกรูปภาพได้</p>
         </div>
 
-        <hr style="border-color: rgba(255, 255, 255, 0.3); margin: 50px 0;">
+        <div class="section">
+            <img src="text03.png" alt="Text 03" class="centered-img">
+        </div>
 
-        <img src="text03.png" alt="Text 03" class="section-image">
-
-        <div class="cover-gallery">
-            <div class="cover-item">
+        <div class="section">
+            <h2>ผลงานน่าสนใจ</h2>
+            <div class="cover-gallery">
                 <a href="https://SugarBrown.readawrite.com" target="_blank">
-                    <img src="cover01.png" alt="Cover 01">
+                    <img src="cover1.png" alt="Cover 1">
                 </a>
-            </div>
-            <div class="cover-item">
                 <a href="https://takerukung.readawrite.com" target="_blank">
-                    <img src="cover02.png" alt="Cover 02">
+                    <img src="cover2.png" alt="Cover 2">
                 </a>
-            </div>
-            <div class="cover-item">
                 <a href="https://Kajornpruek19.readawrite.com" target="_blank">
-                    <img src="cover03.png" alt="Cover 03">
+                    <img src="cover3.png" alt="Cover 3">
                 </a>
             </div>
         </div>
-
+        
     </div>
 
     <script>
-        // --- ส่วนที่ 1: Countdown Timer ---
-        function startCountdown() {
-            // กำหนดวันสิ้นสุด: 31 October 2025, 00:00:00
-            const endDate = new Date("October 31, 2025 00:00:00").getTime();
-            
-            const timer = setInterval(function() {
-                const now = new Date().getTime();
-                const distance = endDate - now;
-
-                // คำนวณเวลาที่เหลือ
-                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-                // แสดงผลในรูปแบบ HH:MM:SS
-                document.getElementById("hours").innerText = String(hours).padStart(2, '0');
-                document.getElementById("minutes").innerText = String(minutes).padStart(2, '0');
-                document.getElementById("seconds").innerText = String(seconds).padStart(2, '0');
-
-                // เมื่อถึงเวลาสิ้นสุด
-                if (distance < 0) {
-                    clearInterval(timer);
-                    document.getElementById("countdown").innerHTML = "สิ้นสุดการนับถอยหลังแล้ว!";
-                }
-            }, 1000);
-        }
-
-        // --- ส่วนที่ 2: Card Generator (Canvas) ---
-        const canvas = document.getElementById('cardCanvas');
-        const ctx = canvas.getContext('2d');
-        const cardImage = new Image();
-        cardImage.crossOrigin = "Anonymous"; // สำคัญสำหรับการจัดการรูปภาพใน Canvas
-        cardImage.src = 'card.jpg';
-
-        const randomTexts = [
+        // ข้อมูล Random
+        const randomPhrases = [
             "ถูกถมในกองนิยายเกย์",
             "เสี้ยนตำนิ้ว",
             "สำลักชานม",
@@ -241,71 +220,138 @@
             "ขี้เกียจหายใจ"
         ];
         
-        // ฟังก์ชันเพื่อวาดข้อความบน Canvas
-        function drawCard(userName, randomText) {
-            // รอให้รูปภาพโหลดเสร็จก่อนวาด
-            if (!cardImage.complete) {
-                cardImage.onload = () => drawCard(userName, randomText);
+        // ------------------------------------------------
+        // 1. COUNTDOWN TIMER
+        // ------------------------------------------------
+        const countdownDate = new Date("October 31, 2025 00:00:00").getTime();
+        const countdownElement = document.getElementById('countdown-timer');
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = countdownDate - now;
+
+            // การคำนวณเวลา
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            // แสดงผลลัพธ์พร้อมการเติมเลขศูนย์ข้างหน้า (Padding)
+            if (distance < 0) {
+                clearInterval(timerInterval);
+                countdownElement.innerHTML = "กิจกรรมสิ้นสุดแล้ว!";
+            } else {
+                const h = String(hours).padStart(2, '0');
+                const m = String(minutes).padStart(2, '0');
+                const s = String(seconds).padStart(2, '0');
+                countdownElement.innerHTML = `${h} : ${m} : ${s}`;
+            }
+        }
+
+        // อัปเดตทุก 1 วินาที (Realtime)
+        updateCountdown(); 
+        const timerInterval = setInterval(updateCountdown, 1000);
+
+
+        // ------------------------------------------------
+        // 2. NAME CARD GENERATOR
+        // ------------------------------------------------
+        const canvas = document.getElementById('cardCanvas');
+        const ctx = canvas.getContext('2d');
+        const cardImage = new Image();
+        const saveButton = document.getElementById('saveButton');
+        let isCardLoaded = false;
+        
+        // โหลดรูปภาพ card.jpg เข้าสู่หน่วยความจำ
+        cardImage.onload = function() {
+            isCardLoaded = true;
+            // เมื่อโหลดเสร็จ ให้วาดรูปเปล่าๆ ขึ้นมาก่อน
+            ctx.drawImage(cardImage, 0, 0, canvas.width, canvas.height);
+        };
+        cardImage.src = 'card.jpg'; // ตรวจสอบว่าไฟล์ชื่อนี้อยู่ในโฟลเดอร์เดียวกัน
+
+        /**
+         * วาดข้อความบน Canvas โดยจัดกลาง
+         * @param {string} text ข้อความที่จะวาด
+         * @param {number} x พิกัด X (จุดกึ่งกลาง)
+         * @param {number} y พิกัด Y
+         * @param {string} font รูปแบบฟอนต์ เช่น '20pt Sarabun'
+         * @param {string} color สีข้อความ
+         */
+        function drawCenteredText(text, x, y, font, color) {
+            ctx.font = font;
+            ctx.fillStyle = color;
+            ctx.textAlign = 'center'; // จัดกลาง
+            ctx.fillText(text, x, y);
+        }
+
+        /**
+         * ฟังก์ชันหลักในการสร้างการ์ดเมื่อกดปุ่ม
+         */
+        function generateCard() {
+            if (!isCardLoaded) {
+                alert("กำลังโหลดรูปภาพพื้นหลัง กรุณาลองใหม่อีกครั้ง");
+                return;
+            }
+            
+            const userName = document.getElementById('userNameInput').value.trim();
+            
+            if (userName === "") {
+                alert("กรุณาใส่ชื่อของคุณก่อน!");
+                saveButton.disabled = true;
                 return;
             }
 
-            // 1. วาดรูป card.jpg
+            // 1. วาดรูปพื้นหลัง card.jpg ใหม่
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // ล้าง Canvas ก่อน
             ctx.drawImage(cardImage, 0, 0, canvas.width, canvas.height);
 
-            // 2. วาดชื่อ (User Name)
-            ctx.font = 'bold 20pt sans-serif'; // Font 20 pt, ตัวหนา (ตามที่ต้องการ)
-            ctx.fillStyle = 'white'; // ตัวหนังสือสีขาว
-            ctx.textAlign = 'center'; // จัดกลางบรรทัด
+            // 2. สุ่มคำพูด
+            const randomIndex = Math.floor(Math.random() * randomPhrases.length);
+            const randomQuote = randomPhrases[randomIndex];
 
-            const nameX = 600; // ตำแหน่ง X: 600
-            const nameY = 450; // ตำแหน่ง Y: 450
+            // 3. วาดชื่อผู้ใช้
+            // ตำแหน่ง x:600 y:450, สีขาว, จัดกลาง, font 20 pt
+            drawCenteredText(userName, 600, 450, '700 20pt Sarabun', 'white');
             
-            ctx.fillText(userName, nameX, nameY);
-
-            // 3. วาดคำ Random
-            ctx.font = '20pt sans-serif'; // Font 20 pt
-            ctx.fillStyle = 'white'; // ตัวหนังสือสีขาว
-            ctx.textAlign = 'center'; // จัดกลางบรรทัด
-
-            const textX = 600; // ตำแหน่ง X: 600
-            const textY = 600; // ตำแหน่ง Y: 600
-
-            ctx.fillText(randomText, textX, textY);
+            // 4. วาดคำพูดสุ่ม
+            // ตำแหน่ง x:600 y:600, สีขาว, จัดกลาง, font 20 pt
+            drawCenteredText(randomQuote, 600, 600, '400 20pt Sarabun', 'white');
+            
+            saveButton.disabled = false;
+            alert(`สร้างการ์ดเรียบร้อยแล้ว! คำสุ่มที่ได้คือ: "${randomQuote}"`);
         }
 
-        // ฟังก์ชันเมื่อกดปุ่ม "รับคำทำนาย"
-        function generateCard() {
-            const userName = document.getElementById('userName').value.trim() || "ผู้ไม่มีชื่อ"; // ใช้ "ผู้ไม่มีชื่อ" หากไม่ได้กรอก
+        /**
+         * ฟังก์ชันสำหรับบันทึกรูปภาพที่สร้างจาก Canvas
+         */
+        function saveImage() {
+            if (saveButton.disabled) {
+                alert("กรุณายืนยันชื่อเพื่อสร้างการ์ดก่อนบันทึก!");
+                return;
+            }
             
-            // สุ่มคำ
-            const randomIndex = Math.floor(Math.random() * randomTexts.length);
-            const randomText = randomTexts[randomIndex];
-            
-            drawCard(userName, randomText);
-        }
-
-        // ฟังก์ชันสำหรับบันทึกรูปภาพ
-        document.getElementById('saveImage').addEventListener('click', function() {
-            // แปลง Canvas เป็น Data URL (PNG format)
+            // แปลง Canvas เป็น Data URL (PNG)
             const dataURL = canvas.toDataURL('image/png');
             
-            // สร้างลิงค์ดาวน์โหลด
+            // สร้าง Element <a> ชั่วคราว
             const a = document.createElement('a');
             a.href = dataURL;
-            a.download = 'card_prediction.png'; // ชื่อไฟล์
+            a.download = 'my_custom_card.png'; // ชื่อไฟล์ที่จะบันทึก
             
-            // จำลองการคลิกเพื่อเริ่มดาวน์โหลด
+            // จำลองการคลิกเพื่อดาวน์โหลด
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
+        }
+
+        // โหลดรูปภาพพื้นหลัง canvas เมื่อโค้ดโหลดเสร็จ เพื่อให้มีภาพ card.jpg เปล่าๆ แสดงก่อน
+        document.addEventListener('DOMContentLoaded', () => {
+            if (isCardLoaded) {
+                ctx.drawImage(cardImage, 0, 0, canvas.width, canvas.height);
+            }
         });
 
-        // --- เริ่มต้นการทำงาน ---
-        window.onload = function() {
-            startCountdown();
-            // วาด Card เริ่มต้นเมื่อหน้าจอโหลดเสร็จ
-            drawCard("ชื่อจะปรากฏที่นี่", "คำทำนายจะปรากฏที่นี่"); 
-        };
     </script>
+
 </body>
 </html>
