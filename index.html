@@ -6,6 +6,49 @@
     <title>หน้าแรก</title>
     <style>
         /* ------------------------------------- */
+        /* ส่วนที่ 0: LOADING SCREEN */
+        /* ------------------------------------- */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #818889; /* สีพื้นหลังตามที่ต้องการ */
+            z-index: 9999; /* ให้ Loading Screen อยู่ด้านบนสุด */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 1s ease-out; /* เพิ่ม Fade out effect */
+            opacity: 1;
+        }
+
+        #loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none; /* ปิดการโต้ตอบเมื่อซ่อนแล้ว */
+        }
+        
+        /* Animation สำหรับรูป Reaper (loading1.png) */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        #loading-reaper {
+            width: 150px; /* ปรับขนาดตามความเหมาะสม */
+            height: auto;
+            margin-bottom: 20px;
+            animation: float 2s ease-in-out infinite; /* ลอยขึ้นลงเบาๆ */
+        }
+
+        #loading-text {
+            width: 200px; /* ปรับขนาดตามความเหมาะสม */
+            height: auto;
+        }
+
+        /* ------------------------------------- */
         /* ส่วนที่ 1: การตั้งค่าพื้นฐานและพื้นหลัง (Video) */
         /* ------------------------------------- */
         body {
@@ -13,25 +56,30 @@
             padding: 0;
             font-family: 'Trajan Pro', Georgia, serif; 
             color: #333;
-            /* ลบ background-image ของ body ออก */
             text-align: center;
             padding-bottom: 50px;
+            /* ซ่อนเนื้อหาหลักไว้ก่อนจนกว่าจะโหลดเสร็จ */
+            visibility: hidden; 
+        }
+
+        body.loaded {
+            visibility: visible;
         }
 
         /* ------------------------------------- */
         /* CSS สำหรับ Video Background */
         /* ------------------------------------- */
         #video-background {
-            position: fixed; /* ล็อกวิดีโอไม่ให้ไหลตาม scroll */
+            position: fixed; 
             right: 0;
             bottom: 0;
             min-width: 100%; 
             min-height: 100%;
             width: auto;
             height: auto;
-            z-index: -100; /* ให้วิดีโออยู่ด้านหลังสุด */
+            z-index: -100;
             overflow: hidden;
-            background-size: cover; /* เพื่อให้วิดีโอครอบคลุมพื้นที่เสมอ */
+            background-size: cover;
         }
         
         /* ------------------------------------- */
@@ -43,8 +91,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.4); /* สีดำทึบแสง 40% */
-            z-index: -99; /* อยู่ด้านบนวิดีโอ แต่อยู่ด้านล่างเนื้อหา */
+            background: rgba(0, 0, 0, 0.4);
+            z-index: -99;
         }
 
         /* จัดเนื้อหาหลักให้อยู่ตรงกลางของพื้นที่ */
@@ -52,15 +100,9 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
-            /* เปลี่ยนสีข้อความให้เป็นสีขาวหรือสีอ่อนเพื่อให้ตัดกับวิดีโอ/Overlay */
             color: #ffffff; 
         }
         
-        /* เปลี่ยนสี text01.png, text02.png, text03.png ใน card section ให้เป็นสีขาว/อ่อน ถ้าเป็นไปได้ */
-        /* แต่เนื่องจากเราไม่สามารถเปลี่ยนสีไฟล์ PNG ได้ เราจะคงไว้ตามเดิม */
-        /* ส่วนนี้ควรถูกตรวจสอบและปรับปรุงเพิ่มเติมหากวิดีโอมีสีเข้มหรือสว่างเกินไป */
-
-
         /* ------------------------------------- */
         /* ส่วนที่ 2: รูปภาพและส่วนกลางหน้าจอ */
         /* ------------------------------------- */
@@ -75,7 +117,7 @@
         /* ส่วนที่ 3: นับถอยหลัง (Countdown) - Default (Desktop) */
         /* ------------------------------------- */
         #countdown {
-            font-size: 5.25em; /* ขนาด Desktop */
+            font-size: 5.25em; 
             font-weight: bold;
             color: #d7c1a0; 
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); 
@@ -88,14 +130,13 @@
         /* ส่วนที่ 4: การ์ด/ใส่ชื่อ (Card Generator) - Default (Desktop) */
         /* ------------------------------------- */
         .card-generator-section {
-            /* เปลี่ยนพื้นหลังให้โปร่งใสขึ้น หรือใช้สีอื่นที่เข้ากับวิดีโอ */
-            background-color: rgba(255, 255, 255, 0.95); /* คงไว้ตามเดิมเพื่อให้ช่อง input อ่านง่าย */
+            background-color: rgba(255, 255, 255, 0.95);
             padding: 30px;
             margin: 40px auto;
             border-radius: 15px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             max-width: 600px;
-            color: #333; /* ตั้งค่าสีข้อความใน Section นี้กลับเป็นสีเข้ม */
+            color: #333; 
         }
         
         /* ช่องกรอกชื่อและปุ่ม */
@@ -216,7 +257,6 @@
             }
         }
         
-        /* ปรับวิดีโอไม่ให้ยืดเกินขอบจอในแนวตั้งเมื่อจอเป็นแนวตั้ง */
         @media (min-aspect-ratio: 16/9) {
             #video-background {
                 width: 100%;
@@ -233,7 +273,12 @@
 </head>
 <body>
 
-    <video autoplay muted loop id="video-background">
+    <div id="loading-screen">
+        <img src="loading1.png" alt="Loading Reaper" id="loading-reaper">
+        <img src="loading2.png" alt="Loading Text" id="loading-text">
+    </div>
+
+    <video muted loop id="video-background">
         <source src="BG.mp4" type="video/mp4">
         Your browser does not support the video tag.
     </video>
@@ -408,8 +453,48 @@
             document.body.removeChild(a);
         });
 
+        /* ------------------------------------- */
+        /* ส่วนที่ 8: JavaScript (จัดการ Loading) */
+        /* ------------------------------------- */
+        
+        // ฟังก์ชันซ่อน Loading Screen
+        function hideLoadingScreen() {
+             const loadingScreen = document.getElementById('loading-screen');
+             const body = document.body;
+             
+             // ซ่อน Loading Screen ด้วยการเพิ่ม Class 'hidden' (มี Transition effect)
+             loadingScreen.classList.add('hidden');
+             
+             // เมื่อ Transition จบ (1 วินาทีตามที่ตั้งใน CSS) ให้ซ่อน Element จริง
+             setTimeout(() => {
+                 loadingScreen.style.display = 'none';
+                 // แสดงเนื้อหาหลัก
+                 body.classList.add('loaded');
+             }, 1000);
+        }
+
         window.onload = function() {
             startCountdown();
+            
+            const video = document.getElementById('video-background');
+            
+            // 1. ตรวจสอบว่าวิดีโอโหลดพร้อมที่จะเล่นได้หรือไม่
+            if (video.readyState >= 3) { // readyState >= 3 คือ 'HAVE_FUTURE_DATA' หรือ 'HAVE_ENOUGH_DATA'
+                // ถ้าโหลดเร็วมาก ก็ซ่อน Loading ได้เลย
+                video.play();
+                hideLoadingScreen();
+            } else {
+                // ถ้าวิดีโอยังไม่พร้อม ให้รอ Event 'canplaythrough' 
+                // (หมายถึงวิดีโอโหลดมากพอที่จะเล่นได้จนจบโดยไม่สะดุด)
+                video.addEventListener('canplaythrough', function() {
+                    video.play(); // เริ่มเล่นวิดีโอ
+                    hideLoadingScreen(); // ซ่อน Loading Screen
+                }, { once: true }); // ให้ Listener ทำงานแค่ครั้งเดียว
+            }
+            
+            // **หมายเหตุ:** ในกรณีที่ 'card.jpg' ยังโหลดไม่เสร็จหลังวิดีโอโหลดเสร็จ 
+            // ระบบจะยังวาด Canvas เปล่า แต่จะไม่กระทบกับการแสดงเนื้อหาหลัก 
+            // เพราะ Card Generator ถูกจัดการแยกกันด้วย cardImage.onload/onerror อยู่แล้ว
         };
 
     </script>
